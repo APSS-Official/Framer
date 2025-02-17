@@ -1,6 +1,7 @@
 # Unnecessary Directories
 # Custom
 build
+install
 out
 .vs
 
