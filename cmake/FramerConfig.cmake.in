@@ -1,7 +1,12 @@
 @PACKAGE_INIT@
 
-set(FRAMER_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
-set(FRAMER_INCLUDES "${FRAMER_ROOT}/include")
-set(FRAMER_LIBS "${FRAMER_ROOT}/lib")
-
 include("${CMAKE_CURRENT_LIST_DIR}/FramerTargets.cmake")
+
+check_required_components(framer)
+
+set(Framer_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
+set(Framer_INCLUDES "${FRAMER_ROOT}/include")
+set(Framer_LIBS "${FRAMER_ROOT}/lib")
+
+include(CMakeFindDependencyMacro)
+find_dependency(ZLIB REQUIRED)

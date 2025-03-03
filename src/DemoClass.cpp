@@ -1,6 +1,6 @@
 #include "DemoClass.h"
 
-std::string DemoClass::getHelloKotlin()
+std::string DemoClass::getHelloWorld()
 {
-	return "Hello Kotlin, from C++";
+	return "Hello World, from Framer!";
 }
