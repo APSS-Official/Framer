@@ -1,6 +1,5 @@
-#include "DemoClass.h"
+#include <Framer/DemoClass.hpp>
 
-std::string DemoClass::getHelloWorld()
-{
-	return "Hello World, from Framer!";
+inline std::string DemoClass::getHelloWorld() {
+	return "Hello World, from Framer";
 }

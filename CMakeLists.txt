@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
-project(Framer LANGUAGES CXX)
+project(Framer VERSION 0.1.0 LANGUAGES CXX)
+
+message(STATUS "${PROJECT_NAME} ${PROJECT_VERSION}")
 
 add_library(framer 
     "src/DemoClass.cpp"
@@ -14,19 +16,18 @@ set_target_properties(framer
     CMAKE_VISIBILITY_INLINES_HIDDEN YES
 )
 
-# Packages
-find_package(OpenCV REQUIRED core dnn)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-target_link_libraries(framer PRIVATE ${OpenCV_LIBS})
-target_compile_definitions(framer PRIVATE FRAMER_EXPORT)
-if(BUILD_SHARED_LIBS)
-    target_compile_definitions(framer PUBLIC FRAMER_SHARED)
-endif()
-target_include_directories(framer PRIVATE ${OpenCV_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+include(dependencies)
 
+include(GenerateExportHeader)
+generate_export_header(framer)
+
+target_include_directories(framer PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src" ${CMAKE_CURRENT_BINARY_DIR})
 include(GNUInstallDirs)
-target_include_directories(framer PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+target_include_directories(framer 
+    PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
@@ -35,10 +36,10 @@ install(TARGETS framer
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 # For find_package
 install(EXPORT FramerTargets
@@ -49,13 +50,22 @@ install(EXPORT FramerTargets
 
 # Generating FramerConfig.cmake from a template
 include(CMakePackageConfigHelpers)
-
+# FramerConfig.cmake
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FramerConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/FramerConfig.cmake"
     INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Framer"
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/FramerConfig.cmake"
+# FramerConfigVersion.cmake
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/FramerConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(FILES 
+    "${CMAKE_CURRENT_BINARY_DIR}/FramerConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/FramerConfigVersion.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Framer"
 )
